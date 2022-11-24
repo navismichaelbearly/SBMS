@@ -1,0 +1,87 @@
+			        Date : 23-11-2022
+			 Spring Boot and Microservices
+			         6AM | ASHOK IT
+			Email: javabyraghu@gmail.com
+			cell :  +91 9985 39 6677
+	------------------------------------------------------------
+Github: (ASHOK IT - Github - RAGHU)
+https://www.youtube.com/watch?v=qLrx6wkM5Ig
+
+			Chapter#1 Spring Core
+
+Dependency : Variable(Field) exist in class(Spring Bean)
+Injection  : provide Data to variable (after creating object/while creating object)
+
+----------------------------------------------------------------------
+1. Spring Bean : It is class that follows rules given by Spring container
+
+a. class must be public type
+b. recomanded to keep in a package (basePackage Rule)
+c. Fields(Variables) are optional, if required recomanded to keep private
+d. If variables present in class, 
+     define default constructor with setters/getters
+     (or/and) Parameterized constrcutor.
+-------------------------------------------------------------------
+e. We can override Object(C) methods :
+   toString()
+   equals() and hashCode().
+[as they are non-private, non-final and non-static]
+
+f. Inheritance Rule:
+   Only Spring API is allowed (ie Spring F/w classes and interfaces)
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/
+
+Ex: Servlets, EJB, JPA..etc are not allowed for inheritance.
+
+g. Annotations Rule:
+ Only we can add Spring API Annotation and Integration API Annotations
+ (Hibernate with JPA, Restful webservices annotations)
+
+=================================================================
+Softwares(2):
+1. JDK (LTS) | [any one]
+https://www.oracle.com/in/java/technologies/javase/jdk11-archive-downloads.html
+https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+
+> Download > Install > Restart system
+
+2. STS (Spring Tool Suite)
+https://spring.io/tools
+
+> Once Download is complete you may see file like:
+spring-tool-suite-4-4.16.1.RELEASE-e4.25.0-win32.win32.x86_64.self-extracting.jar
+
+> Double click on this file to get extracted.
+> Open Folder "sts-4.16.1.RELEASE" > Double click ICON "SpringToolSuite4"
+> Enter Workspace Name "D:/SpringBoot6AM" > Finish
+
+
+-------FAQs-----------------------------------------------------
+Q) Can we define a class as private or protected?
+A) Yes, but only inner classes. Not outer classes.
+  Regular/Outer class can be only public/default.
+
+Q) What is the super class for every java class?
+A) java.lang.Object(C)
+
+Q) What is abstract method?
+A) A method has no Body and declared with abstract keyword.
+ There can be a method delcared with native having no body
+ ie implemented in Native Language(C-Language).
+
+
+Q) Can we override a method of type final/private/static ?
+A) No. It is not possible.
+
+Q) What is the contract between equals() and hashCode()?
+Hint: hashing, compare bucket, id, index...etc
+
+
+Q) What is annotation?
+A) Annotation is a tag added to Java code [Java 1.5]
+  It is a metadata that gives information to Compiler/VM/Container/Server.
+  todo some extra work.
+  like Object creation, check syntax, call methods..etc
+
+  Annotation ---> Compile --> interface
+  Enum -------> Compile ---> class

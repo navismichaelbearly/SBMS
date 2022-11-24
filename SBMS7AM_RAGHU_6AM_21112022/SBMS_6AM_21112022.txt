@@ -1,0 +1,60 @@
+			        Date : 21-11-2022
+			 Spring Boot and Microservices
+			         6AM | ASHOK IT
+			Email: javabyraghu@gmail.com
+	------------------------------------------------------------
+=> 3 types of application
+1. Web Application
+2.*** Distributed Applications ( An application that runs at Multiple Devices)
+	/ Fullstack Applications
+	/ Integration Applications
+3. Microservices Application
+-------------------------------------------------------------------
+1. Web Application : Collection of Web pages run unders webserver.
+
+ 1 Application = n Services | 1 Project     = n Modules
+Ex: Gmail Application
+ User(Register and Login), Inbox, Sent, Drfats, Settings, ..etc
+    Amazon Application
+ User(Register and Login), Search, Cart, Payment...etc
+
+*) Implementation of service/module: 
+	This is implementation using Layers Design.
+	Here we have 3 layers,
+	1. DAL : Data Access Layer (Database Operations)
+	2. SL  : Service Layer ( Calculation/Operations/Tx Management)
+	3. PL  : Presentation Layer (View/Dynamic Web Pages/MVC).
+
+ex: 
+ calFd(){} //SL
+ fetchOneRowById(){} // DAL
+ showRegForm(){} // PL
+
+==Example Distributed Application ==
+*) An application that runs at multiple devices is called as distributed
+  application.
+
+Example: XYZ Bank Application
+=> Frontend Application + Backend Application + Database Server.
+
+This application can be accessed in different ways. Examples:
+1. Manual Process
+2. NetBaking (Web App)
+3. Mobile Banking (Mobile App)
+4. IVR 
+5. ATM / DC 
+6. 3rd Party Apps(GPay)
+..etc
+
+*) But here business logics exist at backend application.
+*) Frontend applications are implemented using Angular, Android,..etc
+
+*) Apps connected using HTTP Protocol using Global Data Format(JSON/XML).
+
+=====================================================================
+Webservices: Integration of multiple (at least two) applications
+ which runs on different servers and implemented using different 
+ languages (Java, .Net, PHP, Python..etc)
+
+=> Here both applications are linked using IL (Integration Layer)
+Using HTTP protocol and JSON/XML as Data Formats.
