@@ -1,0 +1,242 @@
+			        Date : 25-11-2022
+			 Spring Boot and Microservices
+			         6AM | ASHOK IT
+			Email: javabyraghu@gmail.com
+			cell :  +91 9985 39 6677
+	------------------------------------------------------------
+			Spring XML Configuration
+<bean> --> Creating Object
+<property> ---> Calling set method
+<value> --> provide data (Primitive type)
+
+*) Spring Core First Application : 3 files
+1. Spring Bean (__.java)
+2. Spring XML Configuration (___.xml)
+3. Test class (__.java)
+
+*)Note:
+1. Spring Containers are two Types.
+a. Legacy Container : BeanFactory(Supports only XML)
+b. New Container : ApplicationContext(Supports all 
+			XML/Java/Annotation Config)
+
+c. ApplicationContext it is a interface.
+   We are using one of its Impl class:
+   ClasPathXmlApplicationContext(C).
+
+d. It mean,
+   ClassPath = src/main/resources folder
+   Xml = XML Config File
+   ApplicationContext = Spring Container
+
+ ie Creating Spring container using XML file
+  which exist at src/main/resources folder
+
+===sample Test class code===========================================
+//creating container + objects
+ApplicationContext ac = new ClasPathXmlApplicationContext("config.xml");
+//read object from container
+Object ob = ac.getBean("objName");
+//print object data
+sysout(ob);
+
+==================================================================
+Softwares(2):
+1. JDK (LTS) | [any one]
+https://www.oracle.com/in/java/technologies/javase/jdk11-archive-downloads.html
+https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+
+> Download > Install > Restart system
+
+2. STS (Spring Tool Suite)
+https://spring.io/tools
+
+> Once Download is complete you may see file like:
+spring-tool-suite-4-4.16.1.RELEASE-e4.25.0-win32.win32.x86_64.self-extracting.jar
+
+> Double click on this file to get extracted.
+> Open Folder "sts-4.16.1.RELEASE" > Double click ICON "SpringToolSuite4"
+> Enter Workspace Name "D:/SpringBoot6AM" > Finish
+
+
+
+========================================================================
+************************************************************************
+Create Maven Project with below steps:
+************************************************************************
+========================================================================
+1. Create Project
+> File > new > other > Type Maven > Choose Maven Project > next
+> Choose Checkbox [v] Create Simple Project > Next > Enter details
+
+GroupId : com.app.raghu
+ArtifactId: SpringCoreFirstApp
+Version  : 1.0
+
+> Finish
+
+2. pom.xml [POM-Project Object Model]
+(Paste below code after version tag and before project close tag)
+
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+	</dependencies>
+
+3. Update Maven Project (alt+F5)
+> Right click Project > Maven > Update Project > Choose Check box
+[v] Force Update > Finish
+
+
+======================================================================
+***********************************************************************
+			Coding Part
+***********************************************************************
+======================================================================
+1. Create Spring Bean
+> Right click on src/main/java > new > class > Enter package and classname
+> click Finish
+
+package com.app.raghu;
+public class MyDbCon {
+
+	private String driver;
+	private String url;
+	//Source > Generate Constructor using Fields > Deselect All > Generate
+	public MyDbCon() {
+		super();
+	}
+	//Source > Generate setters/getters > Select All > Generate
+	public String getDriver() {
+		return driver;
+	}
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	//Source > Generate toString > Generate
+	@Override
+	public String toString() {
+		return "MyDbCon [driver=" + driver + ", url=" + url + "]";
+	}
+	
+	
+}
+
+***2. Spring XML Config File
+> Right click on src/main/resources > new > File > Enter name : config.xml
+> next > finish
+
+---config.xml--------
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="mobj" class="com.app.raghu.MyDbCon">
+    	<property name="driver">
+    		<value>OraclDriver</value>
+    	</property>
+    	<property name="url">
+    		<value>JDBC-ORCL</value>
+    	</property>
+    </bean>
+
+</beans>
+--------------------------------------
+
+** You can copy XML Top lines from here:
+https://docs.spring.io/spring-framework/docs/4.2.x/spring-framework-reference/html/xsd-configuration.html
+[Google Search : Spring XML Configuration]
+
+
+3. Test class
+package com.app.raghu;
+
+//ctrl+shift+O
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Test {
+	//main > ctrl+space > enter key
+	public static void main(String[] args) {
+		//creating spring container
+		ApplicationContext ac = new ClassPathXmlApplicationContext("config.xml");
+		//read object
+		Object ob = ac.getBean("mobj");
+		//print data
+		System.out.println(ob);
+	}
+}
+
+
+======================STS/Eclipse Key Shortcuts=====================
+ctrl +  / ctrl -   : To adjust font sizes
+
+ctrl + shift + F  : To do Indentation
+
+Alt+F5  : To update Maven Project
+
+ctrl+shift+T  : To open any pre-defined java class
+
+ctrl+O         : View all members of class
+
+ctrl+L         : Goto Line Number
+
+ctrl+shift+O   : Import lines
+======================================================================
+
+*) Common issues:
+1. Import statements (Check Spelling)
+2. XML File name issue: FileNotFoundException
+3. Invalid object name:
+  NoSuchBeanDefinitionException: No bean named 'mObj' available
+4. If we miss set/get methods : NotWritablePropertyException 
+
+
+-> toString() is a method from Object class.
+-> This method prints fullClassName + @ + hashCode In HexaDecimal Format
+-> This is not a final/static/private method. So we can override
+	and we can print our class/object data.
+
+-> Java compiler (not JVM) provides default constructor when we do not
+	write any constructor in class.
+================================================================
+*) We can write code using value as attribute:
+    <bean id="mobj" class="com.app.raghu.MyDbCon">
+    	<property name="driver" value="MySQLDriver"/>
+    	<property name="url" value="JDBC-ORCL"/>
+    </bean>
+
+*) p-schema : Very short format of using property name
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean 
+       id="mobj" 
+       class="com.app.raghu.MyDbCon"
+    	p:driver="TestDriver"
+    	p:url="JDBC-ORCL"/>
+    
+
+</beans>
