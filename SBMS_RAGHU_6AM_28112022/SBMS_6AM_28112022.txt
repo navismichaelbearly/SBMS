@@ -44,7 +44,7 @@ c. Test class (see output)
 *) These are 4. Given as,
 
    Collection Name	Collection Type     XML Tag Name
-        List                Interface         <list>
+    List                Interface         <list>
 	Set                 Interface         <set>
 	Map                 Interface         <map> and <entry>
 	Properties          Class             <props> and <prop>
