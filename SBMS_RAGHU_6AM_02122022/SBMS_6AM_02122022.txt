@@ -1,0 +1,190 @@
+			 Date : 02-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+			javabyraghu@gmail.com
+  --------------------------------------------------------------------- 
+Spring Annotation Configuration:-
+1. @Component     : Create Object to given class
+2. @Value         : To provide data (Field Injection) to variable
+3. @ComponentScan : To find classes using basePackage.
+
+=====================================================================
+Properties File (________.properties)
+-------------------------------------
+=> This is also called as key-val pair input as Text format(String).
+=> This file is used to provide setup data to application.
+=> Here, we can read data from properties file into variable using
+	@Value("${keyName}")
+=> Symbol - # indicates comment line.
+
+=> Programmer has to define and load Proeprties file.
+   Use @PropertySource annotation to load file, into Spring container.
+
+=> Container creates Environment(I) object (internally used 
+   StandardEnvironment(C) ).
+
+=> We can read data using @Value("${keyName}").
+
+=> key name is case-sensitive. ie PORT, port, Port are different.
+
+=> If we define duplicate key with different value (not recomanded)
+  then last combination is taken into Container. 
+
+---myapp.properties-------
+  my.id=10
+  my.id=20
+  my.id=30
+
+  @Value("${my.id}")  ===> 30 
+
+=> For boolean datatype valid inputs are : false and true
+  (case-insensitive, FALSE, FalSE, FaLSe, ..etc are allowed)
+
+=> @Value internally parse/convert the data. If parsing invalid
+ then it will throw exception
+    TypeMismatchException: Failed to convert value of type 
+         'java.lang.String' to required type 'int'
+
+=>** if given key is not present in properties file then expression
+   is taken as value.
+
+   Ex: @Value("${my.db}")
+       String driver;
+
+  Consider my.db is not present , then value of driver = "${my.db}".
+
+============Code===================================================
+Name : SpringCorePropertiesFile
+1. pom.xml
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+	</dependencies>
+
+2. Create Properties file
+> Right click on src/main/resource folder > new > file 
+> Enter name : myapp.properties > finish
+
+-----myapp.properties--------
+#SIMPLE DATA INPUT FILE
+# Symbols allowed to write keyName ( dot .  dash -   underscore _)
+my.db=oracle
+my.url=oracle-jdbc
+my.un=raghu
+my.pwd=sample
+my.port=3306A
+my.enable=FALse
+-----------------------------
+
+3. Spring bean
+package com.app.raghu.bean;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component("dbObj")
+public class DatabaseCon {
+	@Value("${my.db}")
+	private String driver;
+	
+	@Value("${my.url}")
+	private String url;
+	
+	@Value("${my.un}")
+	private String username;
+	
+	@Value("${my.pwd}")
+	private String password;
+	
+	@Value("${my.port}")
+	private int port;
+	
+	@Value("${my.enable}")
+	private boolean active;
+	
+	@Override
+	public String toString() {
+		return "DatabaseCon [driver=" + driver + ", url=" + url + ", username=" + username + ", password=" + password
+				+ ", port=" + port + ", active=" + active + "]";
+	}	
+	
+	
+}
+
+
+4. Spring Config File
+package com.app.raghu.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.PropertySource;
+
+@ComponentScan("com.app.raghu")
+@PropertySource("classpath:myapp.properties")
+public class AppConfig {
+
+}
+
+5. test class
+package com.app.raghu.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.app.raghu.bean.DatabaseCon;
+import com.app.raghu.config.AppConfig;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+		DatabaseCon db = ac.getBean("dbObj", DatabaseCon.class);
+		System.out.println(db);
+	}
+}
+====================================================================
+Q) Can we load multiple Properties file into Spring container ?
+A) YES, we can using @PropertySources annotation
+
+[New Version]
+@PropertySources({
+	@PropertySource("classpath:cache.properties"),
+	@PropertySource("classpath:jdbc.properties"),
+	@PropertySource("classpath:email.properties")
+	
+})
+
+or we can use Array Syntax {} with @PropertySource.
+Ex:
+[Legacy Style]
+@PropertySource({ 
+	"classpath:cache.properties", 
+	"classpath:jdbc.properties", 
+	"classpath:email.properties"
+})
+
+*) We can provide multiple basePackages using
+Ex#1
+[New Version]
+@ComponentScans({
+	@ComponentScan("com.app.raghu"),
+	@ComponentScan("com.xyz.test"),
+	@ComponentScan("com.one.two")
+})
+Ex#2
+[Legacy Style]
+@ComponentScan({
+    "com.app.raghu",
+    "com.xyz.test",
+    "com.one.two"
+})
+
+---------------------------------------------
+ctrl+shift+T  >> Enter name 
+keep cursor over text > F3 / Fn+F3
