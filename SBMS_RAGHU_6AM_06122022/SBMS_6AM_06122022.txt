@@ -1,0 +1,198 @@
+			 Date : 06-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  --------------------------------------------------------------------- 
+		   Spring Core - Java Configuration
+
+XML Configuration - <bean> <property> <value> ...etc
+Annotation Configuration -- @Component, @Value, @Autowired ...etc
+Java Configuration -- @Configuration, @Bean
+===================================================================
+*) Annotation Configuration can be used if we have source code of Spring Bean
+  (___.java code), ie Programmer defined class/User Defined class.
+*) If a class(Spring Bean) is pre-defined then we can not use Annotation
+  Configuration.
+
+*) In above case we go for Java Configuration. Even we can configure
+  multiple beans(objects) using Java Configuration, where annotation
+  config supports only one Bean(object) Configuration.
+
+--------------------Java Configuration Steps-------------------
+1. Define one public class with any name 
+2. Apply @Configuration annotation over class
+3. For one object = define one method
+
+  public <className> <objectName>() {}
+         ReturnType    methodName
+
+4. Add @Bean over method.
+
+------------------------------------------------
+@Configuration
+public class _________ {
+ 
+  @Bean
+  public <className> <objName>() {
+  
+  }
+
+}
+==========Examples=============================================
+JdbcTemplate (pre-defined class)
+
+@Configuration
+public class AppConfig {
+  @Bean
+  public JdbcTemplate jtObj(){
+    return new JdbcTemplate();
+  }
+}
+--------------------------------------------------------------------
+DriverManager (pre-defined class)
+
+@Configuration
+public class AppConfig {
+   @Bean
+   public DriverManager dmObj() {
+     return new DriverManager();
+   }
+}
+Q1) Consider given (Spring Bean)class is a pre-defined class.
+	Can we use Annotation Config?
+A) No. We can use Annotation Configuraion we have source code only.
+  (We must need __.java file)
+
+Q2) Can we XML/Java Configuration to define one Bean for pre-defined class?
+A) Both supports any type of class to configure
+	(Pre-defined/programmer defined)
+
+Q3) What is the mean of @Configuration and @Bean?
+A) @Configuration says "Hey! I'm a Config File, not a simple java clas"
+  to Spring Container.
+
+  @Bean --> Please create one object inside Spring container
+
+Q4) What is the diff b/w @Component and @Bean?
+A) 
+    @Component -- Used for Programmer defined class
+    @Bean - Mainly for pre-defined (supports both)
+
+Q5) What is the diff b/w @Component and @Configuration ?
+A) We can not compare them.
+   @Component - creating object
+   @Configuration - I'm a Input to container having lot of beans config.
+
+Q6) Can we use Java Configuration for both pre-defined and use-defined
+   (programmer-defined) classes? If Yes, then why Annotation Configuration?
+A) We can write Java Config Code for a programmer-defined class.
+  But code becomes lengthy, execution is bit slow compared to annotation.
+
+Q7) Do we need to provide @ComponentScan/basePackage for Java Config ?
+A) No. it is required only for Annotation Config.
+========================================================================
+** If we create an object inside one method then it is called as 
+   local variable. We can not access it outside. 
+
+
+m1(){
+ A a = new A();
+}
+m2(){
+ sysout(a);
+}
+
+class Test{
+ m3() { sysout(a); }
+}
+
+Q8) What is the use of @Bean , if we use new keyword and set method
+   to create full object in Java Config?
+A) This object is not a local scope object, created inside Spring container
+  with scope singleton and accessable in project(any where).
+
+=================Full Code==============================
+1. pom.xml
+<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+	</dependencies>
+
+2. Spring Bean
+package com.app.raghu.bean;
+
+public class PdfExport {
+
+	private String fileName;
+	private String fileAuth;
+	
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getFileAuth() {
+		return fileAuth;
+	}
+	public void setFileAuth(String fileAuth) {
+		this.fileAuth = fileAuth;
+	}
+	@Override
+	public String toString() {
+		return "PdfExport [fileName=" + fileName + ", fileAuth=" + fileAuth + "]";
+	}
+	
+	
+}
+
+
+3. AppConfig
+package com.app.raghu.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.app.raghu.bean.PdfExport;
+
+@Configuration
+public class AppConfig {
+	
+	@Bean
+	public PdfExport pobj() {
+		PdfExport p = new PdfExport();
+		p.setFileName("SBMS");
+		p.setFileAuth("RAGHU");
+		return p;
+	}
+	
+}
+
+4. Test class
+package com.app.raghu.test;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.app.raghu.bean.PdfExport;
+import com.app.raghu.config.AppConfig;
+
+public class Test {
+
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+		PdfExport pe = ac.getBean("pobj",PdfExport.class);
+		System.out.println(pe);
+	}
+}
+==================================================================
