@@ -1,0 +1,249 @@
+			 Date : 10-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+Github:
+https://www.youtube.com/watch?v=qLrx6wkM5Ig
+
+  	   Spring Bean Scope - LMI (Lookup Method Injection)
+
+Problem Statement:-
+If two Spring Beans(classes) are connected using Reference Type(HAS-A)
+and Child class(Independent ) scope is prototype and parent class
+(Dependent) scope is singleton. They they may not get linked as expected.
+(or) Always Parent links to first child object.
+
+--code----------
+pom.xml
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+	</dependencies>
+
+*)Spring Beans
+package com.app.raghu.bean;
+
+import java.util.Random;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
+@Scope("prototype")
+public class Token {
+
+	private int token;
+	
+	public Token() {
+		token = new Random().nextInt(9999);
+	}
+
+	@Override
+	public String toString() {
+		return "Token [token=" + token + "]";
+	}
+	
+	
+}
+-------------
+package com.app.raghu.bean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
+@Scope("singleton")
+public class TokenService {
+
+	@Autowired
+	private Token tokenOb;
+	
+	public Token getTokenOb() {
+		return tokenOb;
+	}
+
+	@Override
+	public String toString() {
+		return "TokenService [tokenOb=" + tokenOb + "]";
+	}
+	
+	
+}
+
+*) AppConfig class
+package com.app.raghu.config;
+
+import org.springframework.context.annotation.ComponentScan;
+
+@ComponentScan("com.app.raghu")
+public class AppConfig {
+
+}
+
+*) Test class
+package com.app.raghu.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.app.raghu.bean.TokenService;
+import com.app.raghu.config.AppConfig;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+		TokenService ts1 = ac.getBean("tokenService", TokenService.class);
+		System.out.println(ts1);
+		System.out.println("Token Service HS:"+ts1.hashCode());
+		System.out.println("Token HS:"+ts1.getTokenOb().hashCode());
+
+		System.out.println("------------------------------");
+
+		TokenService ts2 = ac.getBean("tokenService", TokenService.class);
+		System.out.println(ts2);
+		System.out.println("Token Service HS:"+ts2.hashCode());
+		System.out.println("Token HS:"+ts2.getTokenOb().hashCode());
+
+		System.out.println("------------------------------");
+
+		TokenService ts3 = ac.getBean("tokenService", TokenService.class);
+		System.out.println(ts3);
+		System.out.println("Token Service HS:"+ts3.hashCode());
+		System.out.println("Token HS:"+ts3.getTokenOb().hashCode());
+
+	}
+}
+
+====================================================================
+Solution :-
+ This solution is given by Spring F/w. Programmer need not to implement
+ any logic. But need to provide some details to container.
+
+--> Code Modifications comes at parent class only.
+1. define one public method with empty body
+2. Return Type of such method should be child type
+3. add return null statement
+4. Add one annotation over method : @Lookup
+5. call this method some where in code  (ex: getter method)
+
+--New / Modified parent class code--------------
+package com.app.raghu.bean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
+@Scope("singleton")
+public class TokenService {
+
+	@Autowired
+	private Token tokenOb;
+	
+	@Lookup
+	public Token linkNewChildObj() {
+		return null;
+	}
+	
+	public Token getTokenOb() {
+		this.tokenOb = linkNewChildObj();
+		return tokenOb;
+	}
+
+	@Override
+	public String toString() {
+		return "TokenService [tokenOb=" + tokenOb + "]";
+	}
+	
+	
+}
+
+*) Spring Container uses context- code generator which is using
+ reflection API to find newly created object for given type.
+ If yes then it is re-assigned/linked/set to parent class object.
+
+Ref:
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Lookup.html
+========================================================================
+		Spring F/w : Circular Dependency
+
+*) if two classes are connected using ReferenceType (HAS-A) Relation
+ then objects are created using default constrcutors first and 
+ linked using set methods one after another.
+
+ Such process is called as CD and handled by Spring container.
+
+** DO NOT OVERRIDE toString() method in Both classes.
+if we do, then toString() methods are called in loop from both classes
+then results : Exception in thread "main" java.lang.StackOverflowError
+
+
+--code------
+package com.app.raghu.bean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class EmployeeService {
+	
+	@Autowired
+	private ProjectService pservice;
+
+	
+}
+------
+package com.app.raghu.bean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ProjectService {
+
+	@Autowired
+	private EmployeeService eservice;
+
+	@Override
+	public String toString() {
+		return "ProjectService [eservice=" + eservice + "]";
+	}
+	
+}
+-----------
+package com.app.raghu.config;
+
+import org.springframework.context.annotation.ComponentScan;
+
+@ComponentScan("com.app.raghu")
+public class AppConfig {
+
+}
+-----------
+package com.app.raghu.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.app.raghu.bean.ProjectService;
+import com.app.raghu.config.AppConfig;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+		ProjectService ps = ac.getBean("projectService",ProjectService.class);
+		System.out.println(ps);
+	}
+}
+======================================================================
