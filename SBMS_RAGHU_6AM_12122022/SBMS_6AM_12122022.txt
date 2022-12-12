@@ -1,0 +1,63 @@
+			 Date : 12-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+Spring Framework:-
+*) It is mainly used to develop web/webservices applications.
+*) Here, programmer has to define configuration 
+  [input to Spring container].
+  which is very lengthy and started from line1.
+
+==Example===
+Database Connection: XML Configuration
+
+<bean id="dsObj" class="DriverManagerDataSource">
+  <property name="driverClassName">
+     <value>OracleDriver</value>
+  </property>
+  <property name="url">
+     <value>jdbc-orcl</value>
+  </property>
+  <property name="username">
+     <value>raghu</value>
+  </property>
+  <property name="password">
+     <value>test123</value>
+  </property>
+</bean>
+
+------------------------------------------------------
+Spring Boot:-
+ Spring Boot is a Spring based Project, which contains common code/configuration
+ /setup/jars/..etc that reduces coding to child project.
+
+ Spring Boot mainly provide Auto-Configuration.
+ 
+ => Auto-Configuration provides pre-defined code at Parent in the jars
+    formats. (.java->.class->.jar)
+
+===Example=============
+Maven/Gradle
+pom.xml/build.gradle
+
+Jar Name: spring-boot-starter-jdbc
+
+--application.properties---
+driver=Oracle
+url=abc
+un=xyz
+pwd=1234
+-----------------------------------------------------------------
+
+*) What is starter : it is a JAR File contains common code
+  exist at parent project.
+
+Ex:
+spring-boot-starter-jdbc
+spring-boot-starter-web
+spring-boot-starter-data-jpa
+spring-boot-starter-mail
+spring-boot-starter-security
+spring-boot-starter-json
+spring-boot-starter-activemq
+..etc
