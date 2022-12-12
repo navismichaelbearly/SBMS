@@ -1,0 +1,276 @@
+			 Date : 29-11-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+			javabyraghu@gmail.com
+  --------------------------------------------------------------------- 
+	Spring Core : Referece Type Dependenecy - Setter Injection
+
+*) Two java classes are connected using relations
+1. Inheritance : IS-A : extends or implements keyword is used
+2. Association : HAS-A : class/interface used as a DataType, 
+                        and create variable.
+
+*) Here Association is known as Referece Type Dependenecy.
+Ex:
+  Car IS-A Vehicle
+  Car HAS-A Engine
+  Book HAS-A Author
+=====Note:======================================================================
+*) <ref/> tag is used to link objects in case of HAS-A Relation.
+Syntax:
+  <property name="variableName">
+      <ref bean="childObjName"/>
+  </property>
+
+*) ref, we can pass it as attribute:
+  <property name="variableName" ref="childObjName"/>
+
+*) if we do not use this then Ref variable holds default value null.
+*) Spring container creates object to both classes and link them.
+*) if child object name (ref bean name) is not valid or not exist
+ then Spring container throws exception like
+ NoSuchBeanDefinitionException: No bean named 'dbObja' available
+
+=========Code=================================================
+Name : 03SpringCoreXmlRefEx
+*) pom.xml
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+	</dependencies>
+
+*) Spring Bean
+package com.app.raghu;
+
+public class MyDbCon {
+
+	private String driver;
+	private String url;
+	
+	public MyDbCon() {
+		super();
+	}
+	public String getDriver() {
+		return driver;
+	}
+	public void setDriver(String driver) {
+		this.driver = driver;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	@Override
+	public String toString() {
+		return "MyDbCon [driver=" + driver + ", url=" + url + "]";
+	}
+	
+	
+}
+----------------
+package com.app.raghu;
+
+public class JdbcOpr {
+
+	private MyDbCon con;
+
+	public JdbcOpr() {
+		super();
+	}
+
+	public MyDbCon getCon() {
+		return con;
+	}
+
+	public void setCon(MyDbCon con) {
+		this.con = con;
+	}
+
+	@Override
+	public String toString() {
+		return "JdbcOpr [con=" + con + "]";
+	}
+	
+	
+}
+
+*) config.xml [spring xml configuration file]
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   
+   <bean id="dbObj" class="com.app.raghu.MyDbCon">
+   		<property name="driver" value="OracleDriver"/>
+   		<property name="url" value="JDBC-ORCL"/>
+   </bean>
+  
+   <bean id="jdbcObj" class="com.app.raghu.JdbcOpr">
+   		<property name="con" ref="dbObj"/>
+   </bean>
+   
+</beans>
+
+*) Test class
+package com.app.raghu;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext ac = new ClassPathXmlApplicationContext("config.xml");
+		JdbcOpr jdbc = ac.getBean("jdbcObj",JdbcOpr.class);
+		System.out.println(jdbc);
+	}
+}
+===================================================================
+SI (Setter Injection): 
+  Spring container creates object to given class using default 
+  constrcutor and provide data using setter method.
+
+Ex Meaning :
+Employee e= new Employee();<===  <bean id="e" class="Employee"
+e.setEmpId(10);            <===  <property name="empId" value="10"
+e.setEmpName("A");         <===  <property name="empName" value="A"
+
+CI (Constrcutor Injection):
+  Spring container creating object and providing data using
+  Parameterized constructor. 
+
+*) Here, we use <constructor-arg> tag to indicate 
+	one Constructor parameter.
+
+Ex: Meaning:
+Employee e = new Employee(10,"A");
+  <bean id="e" class="Employee">
+     <constructor-arg>
+     	<value>10</value>
+     </constructor-arg>
+     <constructor-arg>
+     	<value>A</value>
+     </constructor-arg>
+  </bean>
+
+*) Note:
+A. If a class has 3 param constructor then we need to pass 
+	<constructor-arg> 3 times in XML Config file
+B. Data must be passed in order using <constructor-arg> as per
+   Constructor defined in class.
+================================================================
+Name : 04SpringCoreCIEx
+
+*) Spring bean
+package com.app.raghu;
+
+public class Vendor {
+
+	private String vcode;
+	private String vaddr;
+	
+	public Vendor(String vcode, String vaddr) {
+		super();
+		this.vcode = vcode;
+		this.vaddr = vaddr;
+	}
+	@Override
+	public String toString() {
+		return "Vendor [vcode=" + vcode + ", vaddr=" + vaddr + "]";
+	}
+	
+}
+--------------------------------
+package com.app.raghu;
+
+import java.util.List;
+
+public class Product {
+
+	private String pcode;
+	private String model;
+	private List<String> data;
+	private Vendor vob;
+	
+	// Source > Generate Constructor Using Fields > Select All > Generate
+	public Product(String pcode, String model, List<String> data, Vendor vob) {
+		super();
+		this.pcode = pcode;
+		this.model = model;
+		this.data = data;
+		this.vob = vob;
+	}
+
+	// Source > Generate toString > Generate
+	@Override
+	public String toString() {
+		return "Product [pcode=" + pcode + ", model=" + model + ", data=" + data + ", vob=" + vob + "]";
+	}
+	
+}
+
+---config.xml-----------------
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<bean id="v1" class="com.app.raghu.Vendor">
+		<constructor-arg>
+			<value>V1109</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>HYD IND</value>
+		</constructor-arg>
+	</bean>
+   
+   <bean id="pobj" class="com.app.raghu.Product">
+   		<constructor-arg>
+   			<value>P01</value>
+   		</constructor-arg>
+   		<constructor-arg>
+   			<value>NY-i10</value>
+   		</constructor-arg>
+   		<constructor-arg>
+   			<list>
+   				<value>AA</value>
+   				<value>BB</value>
+   			</list>
+   		</constructor-arg>
+   		<constructor-arg>
+   			<ref bean="v1"/>
+   		</constructor-arg>
+   </bean>
+   
+</beans>
+
+----------------Test class--------------------------
+package com.app.raghu;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext ac = new ClassPathXmlApplicationContext("config.xml");
+		Product pob = ac.getBean("pobj",Product.class);
+		System.out.println(pob);
+	}
+}
+=====================================================================

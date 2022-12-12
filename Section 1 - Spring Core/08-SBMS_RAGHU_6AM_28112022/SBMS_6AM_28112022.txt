@@ -1,0 +1,238 @@
+			 Date : 28-11-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+			javabyraghu@gmail.com
+  --------------------------------------------------------------------- 
+			Chapter#1 Spring Core
+
+*) Spring Container (DI - Dependency Injection)
+*) Dependency - Variable exist in class
+   3-types
+   -> Primitive Type (8+1) : byte, short, int, long, float, double,
+				boolean, char, String
+   -> Collection Type(4) : Set, List, Map and Properties
+   -> Reference Type (X) : Using a class/interface variable
+*) Injection - Provide data
+  -> Setter Injection
+  -> Constrcutor Injection
+  -> LookUp Method Injection
+  -> Field Injection (Annotation)
+===============================================================
+1. Spring Core First Application
+a. Spring Bean (class + rules)
+b. Spring Configuration (__.xml) ****
+c. Test class (see output)
+
+=====================[XML TAGS]===================================
+<bean>		: Creating Object
+
+<property>	: Calling Setter-method
+<constructor-arg> : Calling Parameterized Constructor
+
+<value>		: Primitive 
+<list> <set> <map> and <props> : Collections
+<ref/>		: Reference Type
+
+=====================================================================
+*********************************************************************
+		[  Collections Configuration  ]
+*********************************************************************
+=====================================================================
+*) Spring container supports working with collection Configuration
+   which are from java.util package.
+
+*) These are 4. Given as,
+
+   Collection Name	Collection Type     XML Tag Name
+    List                Interface         <list>
+	Set                 Interface         <set>
+	Map                 Interface         <map> and <entry>
+	Properties          Class             <props> and <prop>
+
+*) When a Programmer uses interface in coding, then Container chooses
+	a default implementation for collections. Given as,
+   List -> ArrayList
+   Set  -> LinkedHashSet
+   Map  -> LinkedHashMap
+   Properties --> --NA--
+
+*) Map is a collection of Entries. 1 Entry = 1 Key + 1 Value
+-> Entry we can define in tags format (or) attributes format.
+
+--Entry key val as tags-----
+<entry>
+  <key>
+    <value>___</value>
+  </key>
+  <value>___</value>
+</entry>
+
+--Entry - key val as attributes-----
+<entry key="__" value="__"/>
+
+Q) What is the diff b/w Map and Properties?
+A)
+  Map is interface that supports sending programmer types
+  for both key-value.
+
+  Properties is a class that is internally Hashtable.
+  It is recomanded to use when both key-value is String type.
+
+Q) Can we Inject null value to a collection object? in Spring Config?
+A) Yes. Use <null></null> or <null/> (not for Proeprties)
+
+============Ex#2 : XML Configuration ===========================
+1. pom.xml
+<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+	</dependencies>
+
+2. Spring Bean
+package com.app.raghu;
+//ctrl+shift+O
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+public class MyDetails {
+
+	private List<String> data;
+	private Set<String> models;
+	private Map<Integer,String> design;
+	private Properties myinfo;
+	
+	public MyDetails() {
+		super();
+	}
+
+	public List<String> getData() {
+		return data;
+	}
+
+	public void setData(List<String> data) {
+		this.data = data;
+	}
+
+	public Set<String> getModels() {
+		return models;
+	}
+
+	public void setModels(Set<String> models) {
+		this.models = models;
+	}
+
+	public Map<Integer, String> getDesign() {
+		return design;
+	}
+
+	public void setDesign(Map<Integer, String> design) {
+		this.design = design;
+	}
+
+	public Properties getMyinfo() {
+		return myinfo;
+	}
+
+	public void setMyinfo(Properties myinfo) {
+		this.myinfo = myinfo;
+	}
+
+	@Override
+	public String toString() {
+		return "MyDetails [data=" + data + ", models=" + models + ", design=" + design + ", myinfo=" + myinfo + "]";
+	}
+	
+	
+	
+}
+
+3. Spring XML Config file
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="mobj" class="com.app.raghu.MyDetails">
+    	<property name="myinfo">
+    		<props>
+    			<prop key="A1">B1</prop>
+    			<prop key="A2">B2</prop>
+    			<prop key="A3">B3</prop>
+    			<prop key="A4"></prop>
+    		</props>
+    	</property>
+    	<property name="design">
+    		<map>
+    			<entry>
+    				<key>
+    					<value>101</value>
+    				</key>
+    				<value>AB</value>
+    			</entry>
+    			<entry key="102" value="MNO"/>
+    			<entry>
+    				<key>
+    					<value>103</value>
+    				</key>
+    				<null></null>
+    			</entry>
+    		</map>
+    	</property>
+    	<property name="data">
+    		<list>
+    			<value>A</value>
+    			<value>B</value>
+    			<null></null>
+    			<value>C</value>
+    			<value>B</value>
+    		</list>
+    	</property>
+    	<property name="models">
+    		<set>
+    			<value>M1</value>
+    			<null/>
+    			<value>M2</value>
+    			<value>M3</value>
+    			<value>M1</value>
+    		</set>
+    	</property>
+    </bean>
+
+</beans>
+
+4. Test class
+package com.app.raghu;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Test {
+
+	public static void main(String[] args) {
+		ApplicationContext ac = new ClassPathXmlApplicationContext("config.xml");
+		//Object ob = ac.getBean("mobj");
+		MyDetails ob = ac.getBean("mobj", MyDetails.class);
+		System.out.println(ob);
+		System.out.println(ob.getData().getClass().getName());
+		System.out.println(ob.getModels().getClass().getName());
+		System.out.println(ob.getDesign().getClass().getName());
+		System.out.println(ob.getMyinfo().getClass().getName());
+	}
+}
+=====================================================================
+Task: (Write XML Configuration and print this data
+Student(sid,sname,marks:List<Integer>, subjects:Set<String>
+   grades:Map<String,String> )
+Ex Data : sid=10,sname=AJAY, marks=[100,85,96], subjects=[ENG,MAT,SCI]
+	grades={ENG=A+,MAT=A,SCI=A}

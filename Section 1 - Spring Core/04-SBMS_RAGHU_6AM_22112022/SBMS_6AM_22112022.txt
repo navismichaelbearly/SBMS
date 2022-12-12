@@ -1,0 +1,79 @@
+			        Date : 22-11-2022
+			 Spring Boot and Microservices
+			         6AM | ASHOK IT
+			Email: javabyraghu@gmail.com
+	------------------------------------------------------------
+			Chapter #1 Spring Core
+
+*) This module/chapter gives all rules and guidelines to work with
+   Spring container.
+
+*) Spring container:- It takes care of Objects.
+1. Find/Scan our classes(Spring Beans)
+2. Create Objects
+3. Provide Data 
+4. Link Objects
+5. Destory the objects
+
+*) For this Programmer has to provide two inputs.
+1. Spring Bean : class + rules given by Spring container
+2. Spring Configuration : This is main input contins details
+	like object name, relation with other objects, data..etc
+ --> XML / Java / ***Annotation.
+
+*) Spring Container 2 Types:
+1. Old Container : BeanFactory(I) -- Supports only XML Configuration 
+2. New Container : ApplicationContext(I) -- Supports XML / Java / ***Annotation
+			Configuration.
+=======================================================================
+			Dependency Injection (DI)
+	
+	       Theory          Programming			
+		OOPs              Java
+		ORM             Hibernate with JPA
+		DI               Spring IoC ( Spring Container )
+
+*) DI v/s IoC [ Dependency Injection v/s Inversion of Control ]
+
+Dependency (3):-
+An Instance variable (Field) exist inside a class (Spring bean)
+
+a. Primitive Type Dependency (PTD):-
+If a variable is created using (8+1) datatypes:
+ byte, short, int , long, float, double, boolean, char + String
+(Their wrapper classes too) 
+
+b. Collection Type Dependency (CTD):-
+If a variable is created using(4) types:
+[java.util package]
+	List, Set, Map and Properties
+
+c. **Reference Type Dependency (CTD):-
+If a variable is created using other class/interface
+
+==================================================================
+Injection(4):- Give/provide/assign/modify existed 
+ 	provide data to Dependency (inside object)
+
+1. Setter Injection (SI):
+   Provide data to variable using its set method (setter)
+
+//first object is created using default constrcutor
+ Employee e = new Employee();
+// then call set method to provide data.
+ e.setEmpId(10);
+
+2. Constrcutor Injection (CI):
+ Provide data to variable while creating object using Parameterized
+ Constructor.
+
+// creating obj + provide data
+ Employee e = new Employee(10,"A",200.0);
+
+
+3. LookUpMethod Injection(LMI) : Spring Beans Scope
+[When parent bean is singleton and child bean is prototype]
+
+4. Interface Injection (II): Not exist in Spring F/w.
+
+5. Field Injection (FI): (For Annotation Config only)
