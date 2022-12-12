@@ -1,0 +1,231 @@
+			 Date : 07-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  --------------------------------------------------------------------- 
+		Java Configuration : Working with Properties file 
+
+*) Properties file holds data in key=val.
+*) This is used to provide application setup data at runtime.
+  ex: JDBC Connection details, ORM Details, Email Config, Security,
+     View Resolvers..etc
+
+*) .properties file can be loaded using annotation @PropertySource
+ex: @PropertySource("classpath:jdbc.properties")
+Then Container stores all these details into Environment(I) memory.
+Spring f/w has given impl class : StandardEnvironment(C).
+
+*) This Environment(I) can be read from container to app using
+  @Autowired.
+===============Example Code====================================
+1. pom.xml
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.3.23</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.24</version>
+		</dependency>
+	</dependencies>
+
+2. Spring Bean
+package com.app.raghu.bean;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@NoArgsConstructor
+@Setter
+@Getter
+@ToString
+public class MyDbConnection {
+
+	private String driver;
+	private String url;
+	
+}
+
+
+3. Spring Java Config class
+package com.app.raghu.config;
+
+//ctrl+shift+O
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+
+import com.app.raghu.bean.MyDbConnection;
+
+@Configuration
+@PropertySource("classpath:jdbc.properties")
+public class AppConfig {
+	
+	@Autowired
+	private Environment env;
+	
+	@Bean
+	public MyDbConnection dbObj() {
+		MyDbConnection d = new MyDbConnection();
+		d.setDriver(env.getProperty("my.app.driver-class"));
+		d.setUrl(env.getProperty("my.app.url"));
+		return d;
+	}
+}
+
+4. Properties file
+> right click on src/main/resources folder > new > file > Enter name
+ex: jdbc.properties > finish
+
+----jdbc.properties------------
+#key name can have A-Z a-z dash(-) dot(.) underscore(_)
+my.app.driver-class=OracleDriver
+my.app.url=JDBC-ORCL:thin
+
+
+5. Test class
+package com.app.raghu.test;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.app.raghu.bean.MyDbConnection;
+import com.app.raghu.config.AppConfig;
+
+public class Test {
+
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+		MyDbConnection db = ac.getBean("dbObj",MyDbConnection.class);
+		System.out.println(db);
+		
+	}
+}
+=========================================================================
+			Project Lombok API
+
+=> It is open source Java API, used to generate code if we apply annotations
+
+=> Lombok can generate code like
+*) Constructor (default, Parameterized)
+*) Set/get Methods
+*) toString method
+*) hashCode and equals methods
+
+Lombok Maven Dependency:
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.24</version>
+</dependency>
+
+*) Open your Java class and apply annotations like
+@NoArgsConstructor            (zero param Constructor )
+@Setter                        (Generates set method)
+@Getter                        (Generates get method)
+@ToString                      (Generates toString method)
+=================Onetime Activation for Lombok==================
+1 Close STS IDE
+
+2 Goto:
+C:\Users\user\.m2\repository\org\projectlombok\lombok\1.18.24
+
+3 Double click: lombok-1.18.24.jar
+** Wait sometime to detect STS IDE location
+** if not click on SPECIFY LOCATION and SELECT STS IDE Location
+
+4 Click on Install/Update > Quit.
+
+5 Open AGAIN
+6 Remove Lombok Annotations, Save code
+7 Re apply annotations , save code
+================================================================
+*) @Data : Annotation given by Project Lombok that generates
+  set, get, toString, constrcutor, equals and hashcode.
+
+--sample code--------
+package com.app.raghu.bean;
+import lombok.Data;
+
+@Data
+public class MyDbConnection {
+	private String driver;
+	private String url;
+}
+---------------------------------
+@NoArgsConstructor : It will generate a default/zero param constructor
+@AllArgsConstructor : it will generate all parameters constructor.
+
+--Example---
+@NoArgsConstructor
+@AllArgsConstructor
+public class MyDbConnection {
+
+	private String driver;
+	private String url;
+	
+}
+--Generated code--------
+public class MyDbConnection {
+
+	private String driver;
+	private String url;
+
+	public MyDbConnection() {
+	    super();
+	}
+	public MyDbConnection(String driver, String url) {
+	    super();
+	    this.driver = driver;
+	    this.url = url;
+	}
+}
+=====================================================================
+Scope : LifeTime / Time Period of data that exist in memory.
+        How long data exist and where it can be accessable.
+
+--Core Java ---
+Local variable : with in method (method start to end)
+Instance Variable : with in class-methods (object creation to destory)
+Static variable   : Class Loading to Unloading (with in project classes)
+
+--Servlets-----------
+request scope  : Store data at server in a memory until response given
+session scope  : Create memory when user login, destory when user logout
+application scope : Server start to server stop (single memory)
+
+---JSP -------------
+page   : with in JSP page access data
+request
+session
+context/application
+
+-----------Spring Bean Scope-----------------------------
+*) For Spring Bean, one scope is provided by Spring container,
+   based on configuration given by programmer.
+
+*) This scope concept speaks about:
+  When object is created ? How Long this object exist ?
+
+1. singleton (default) : Creating one object per configuration
+2. prototype  : Provides new object on every access.
+3. request    : Only for Web
+4. session    : Only for Web
+5. context / global session [removed]
+
+Q) Lazy Loading and Eager Loading ? [servlets]
+A) 

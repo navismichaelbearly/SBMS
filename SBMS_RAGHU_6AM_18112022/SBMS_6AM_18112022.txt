@@ -21,7 +21,7 @@ Framework:
 => RAD : Rapid Application Development (fast coding/less error rate)
 
 *) Spring Framework:
-=> This is mainly used to develop web/distibuted applications.
+=> This is mainly used to develop web/distributed applications.
 => It has own API.
 => It follows Container System.****
 
