@@ -1,0 +1,94 @@
+			 Date : 13-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+javabyraghu@gmail.com
+For Course :  +91 99 85 39 6677
+
+			Spring Boot Introduction
+
+*) Spring Boot is a Spring based project that provides AutoConfigurations
+  [Reduces common code written in Spring F/w]
+
+*) Spring Boot has provided starters (Pre-Defined Jars for every concept)
+ex:
+	spring-boot-starter-jdbc
+	spring-boot-starter-data-jpa
+	spring-boot-starter-web
+	spring-boot-starter-security
+	spring-boot-starter-mail
+	..etc
+
+*) Spring Boot applications must connect with Parent Project.
+   Our Project is known as Child Project.
+
+*) We can create Spring Boot application either using Maven or using Gradle.
+-> Project/Folder system is created
+-> Dependency Management(JARs)
+-> Links/Properties (Link with Parent Project/ Java Version Properties)
+-> Goals/task (Compile, Build, Deploy..etc)
+
+*) If we use Maven Project there will be pom.xml
+    for Gradle build.gradle files exist.
+
+*****) Spring Boot do not support XML Configuration.
+   We need to work on Java and Annotation Configuration.
+
+  XML is slow compared to Java/Annotation**
+
+*) Spring boot has provided Embedded Webservers
+   [Apache Tomcat(default), Eclipse Jetty, JBoss Undertow]
+   to run our application (NO DOWNLOAD + NO INSTALL)
+
+*) Spring boot has provided Embeeded Database [H2, HyperSQL, Derby]
+   These are also called as In-Memory Database.(NO DOWNLOAD + NO INSTALL)
+   Recomanded to use Dev/Test Environment. Not in Production.
+
+*) Spring boot has provided support to work with External Servers
+   and databases too.
+
+========================================================================
+		    https://start.spring.io/
+		      Spring Initializr
+
+*) This Website provides support to create Spring Boot application.
+*) Even if we use Any IDE(Eclipse, STS, VSCode, IntelliJIDea)
+   that should be finally connected to Spring Initializr
+
+*) It has 5 sections
+1. Build Tool (Maven/Gradle)
+2. Programming Language (Java)
+3. Spring Boot Version (3.0 / 2.7.x)
+4. Project Metadata
+   GroupId   : OrgName (com.oracle)
+   ArtifactId: ProjectName 
+   Version   : 6.1.2
+   
+   Package name: basePackage (All your classes must be under given
+   				package or its sub-package)
+
+5. Dependencies (JARs/Starters) : select Required Startes from Here
+
+>> Finally click on Generate button >> Project is downloaded as ZIP
+>> Extract to a Folder
+
+========================================================================
+JDK : 17/11
+https://www.oracle.com/in/java/technologies/downloads/#java17
+
+*) STS : Spring Tool Suite (using Eclipse)
+Download Link: https://spring.io/tools
+>> Downloaded as a JAR File
+>> Double click to Extract
+>> Open Folder and Choose SpringToolSuite4
+>> provide one workspace (Folder name to store Projects)
+
+>> Create one Project
+ > File > New > Spring Starter Project > Enter details > next
+ > Finish > Just check Folder System.
+=======================================================================
+Package : JAR, WAR and EAR
+
+JAR : Java Archive (Standalone apps)
+WAR : Web Archive (Web Applications)
+EAR : Enterprise Archive (EJBs)  ==> WAR + EJB code

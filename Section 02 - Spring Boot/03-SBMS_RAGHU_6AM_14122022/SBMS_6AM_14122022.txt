@@ -1,0 +1,74 @@
+			 Date : 14-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+			Email: javabyraghu@gmail.com
+
+			Spring Boot First Application 
+
+Steps to Create Project
+> File > new > Spring Starter Project > Enter Details
+
+Name : 01SpringBootFirstApp
+
+Type : Maven
+Language : Java
+Packging : JAR
+
+GroupId: com.app.raghu
+ArtifactId: 01SpringBootFirstApp
+Version   : 1.0
+
+Package : com.app.raghu
+
+> Next > finish
+
+============================================================
+Types of Files: There are mainly 3 types of Files in Every Spring Boot
+	application, given as:
+
+1. Starter class / Main class 
+
+> This is an entry class in execution.
+ It creates Spring Container (new Container : ApplicationContext[I]
+  Impl : AnnotationConfigApplicationContext(C)
+ )
+
+> It loads all classes using BasePackage. 
+  All the classes which are in basePackage or subPackage are scanned
+  by Spring Container and create objects.
+
+> Provide data, read properties file, inject data , link objects..etc
+-------------------------------------------------
+2. Input File (application.properties / application.yml)
+
+This file is used to pass input to container objects.
+It holds data in Key=Val format
+Keys are pre-defined here, we can pass our own keys(custom keys).
+********Internally every key is a variable********
+We can fine all pre-defined keys list at:
+https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties
+
+>> Names of these files are fixed. 
+ But we can even provide our custom properties files.
+
+>> A key name can have symbols like dot(.) dash(-) and underscore(_)
+  No other symbols allowed
+
+ex:
+spring.datasource.driver-class-name=
+my.app.name_model=
+----------------------------------------------------------------
+3. Build Information File (pom.xml / build.gralde) 
+
+This file contains details like
+a. Parent Project details
+ <parent> </parent>
+b. Our project details
+c. Properties(Java Version, Cloud Version,..etc)
+d. Dependencies (JARs)
+e. Build Plugins (Compile-> Build)
+
+*) If we create project using Maven/Gradle, code remains same.
+   Only in place of pom.xml, we get build.gradle
+==============================================================
