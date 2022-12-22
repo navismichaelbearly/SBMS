@@ -1,0 +1,108 @@
+			 Date : 17-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+  			javabyraghu@gmail.com
+			 Spring Boot Core
+1. Runners :-
+ To execute any logic only one time, while starting application
+ (ie after creating container).
+
+--Examples---
+*) Setup data in Database : 
+   INSERT RolesTable (ADMIN, USER, GUEST)..etc
+*) Load File and read data ..etc
+*) Test some logics..
+
+-> Note:
+1. We need to define one class that should implement interface
+	CommandLineRunner(I)
+2. We need to override abstract method run() 
+   and define our logic.
+
+3. Main class/Starter class, after creating container, executing all
+   runners in order.
+
+4. We can define multiple runners, which are executed in NameBased (A-Z) Order.
+
+5. We can provide our own execution order using annotation @Order(_)
+   Lowest value is executed first. If we did not specify any Order
+   then executed at last.
+
+============Example Code=========================================
+Name : 02SpringBootRunnersEx
+
+-code-
+package com.app.raghu.runner;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+@Order(-15)
+public class MessageRunner implements CommandLineRunner {
+
+	public void run(String... args) throws Exception {
+		System.out.println("FROM MESSAGE RUNNER");
+	}
+}
+---
+package com.app.raghu.runner;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+@Order(10)
+public class JdbcRunner implements CommandLineRunner {
+
+	public void run(String... args) throws Exception {
+		System.out.println("FROM JDBC RUNNER");
+	}
+}
+---
+package com.app.raghu.runner;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+
+@Component
+@Order(63)
+public class EmailRunner implements CommandLineRunner {
+
+	public void run(String... args) throws Exception {
+		System.out.println("FROM EMAIL RUNNER");
+	}
+}
+====FAQs================================================================
+Q) What is the use of Runners in Spring Boot?
+A)  
+
+Q) How can we define one Runner in Spring Boot?
+A) 
+
+Q) What is Functional Interface?
+A)
+
+Q) is below interface FI?
+interface A{
+  void m1();
+  String toString();
+  boolean equals(Object ob);
+  int hashCode();
+}
+A) 
+
+
+Q) Can we define multiple Runners in Spring Boot? How are they executed?
+A) 
+
+Q) Can we define our own Execution Order for Runners? How?
+A)
+
+Q) What if we did not provide @Order for few Runners?
+A) 
+

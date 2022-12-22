@@ -1,0 +1,162 @@
+			 Date : 22-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+			Spring Boot Profiles
+			---------------------
+ Maintain multiple Properties/YAML files for multiple environments.
+ Based on Environment selected/running, matching properties/yaml file
+ will be loaded.
+
+Name Rule : application-{profilename}.properties
+
+Activate : (CMD) --spring.profiles.active={profilename}
+
+Ex:
+ Dev Machine (default profile)  : application.properties | application.yml
+ UAT Machine			: application-uat.properties | application-uat.yml
+ Production Machine             : application-prod.properties | application-prod.yml
+  ..etc
+
+*) Our application code remains same in almost all environments.
+   But properties may get varied. Ex: username and password of database.
+
+***) Default Properties file will be loaded always.
+*) To activate any Profile, pass command line arugument while running
+   application. Example :
+		file : application-qa.properties
+		arg  : --spring.profiles.active=qa
+
+==============================code=====================================
+Name : 07SpringBootProfilesExOne
+Dep  : Lombok
+
+1) Spring Bean
+package com.app.raghu.bean;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties(prefix = "my.app.db")
+public class MyDbCon {
+
+	private String driver;
+	private String url;
+	private String username;
+	private String password;
+	private String database;
+}
+
+2) Input Files
+--application.properties---
+my.app.db.driver=Oracle
+my.app.db.url=JDBC-ORCL
+my.app.db.username=raghu
+my.app.db.password=root
+my.app.db.database=testdb
+
+--application-qa.properties--
+my.app.db.driver=MySQL
+my.app.db.url=JDBC-MYSQL
+#my.app.db.username=raghu
+my.app.db.password=ashokIT
+#my.app.db.database=testdb
+
+--application-prod.properties--
+
+#my.app.db.driver=Oracle
+my.app.db.url=JDBC-ORCL-PROD
+my.app.db.username=test
+my.app.db.password=sample
+#my.app.db.database=testdb
+
+-=-=-=-=-=-=-=-=-=-How To Run???-=-=-=-=-=-=-=-=-=-=-=-=-=-
+***********************************************************
+> Right click on Main class Code > Run As > Run Configurations...
+> Click on Argument tab > Goto Program Arguments
+> Enter data like
+    --spring.profiles.active=qa
+> Apply and Run
+***********************************************************
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+**) If any key is not present in current profile(ex: application-qa.properties)
+  Then Container will read it from Default Profile (application.properties)
+
+*) --spring.profiles.active=prod,qa : in this case qa profile overrides
+     prod profile key=vals.
+
+========================================================================
+ARchive : Grouping all files as a single unit.
+
+JAR : Java ARchive
+WAR : Web ARchive
+
+      .java --> .class (compile)
+      .class --> .jar  (build)  [stand-alone application]
+      .class + .html + .css + .js --> .war (build) [web application]
+
+> Compile and build : mvn clean install 
+
+======Converting Spring Boot application Into JAR File and RUN======
+> Once code is done
+> Right click on Project Name
+> Run As > Maven Clean
+
+(wait for build success)
+> Right click on Project Name
+> Run As > Maven Install
+
+(Refresh Project)
+> Right click on Project > Refresh
+
+> Open Cmd and Goto Target Folder location
+  and execute command like:
+  java -jar <fileName>.jar  --spring.profiles.active=qa
+
+(execute sample commands)
+C:\Users\user>d:
+D:\>cd Workspace6AM_boot_2
+D:\Workspace6AM_boot_2>cd 07SpringBootProfilesExOne
+D:\Workspace6AM_boot_2\07SpringBootProfilesExOne>cd target
+D:\Workspace6AM_boot_2\07SpringBootProfilesExOne\target>java -jar 07SpringBootProfilesExOne-1.0.jar
+D:\Workspace6AM_boot_2\07SpringBootProfilesExOne\target>java -jar 07SpringBootProfilesExOne-1.0.jar --spring.profiles.active=qa
+-----------------------------------------------------------
+
+*) In case of using YAML files, code is same. Just define multiple
+  YAML files in class path, given below:
+
+--application.yml--
+my:
+  app:
+    db:
+      driver: ORACLE
+      url: JDBC-ORCL
+      username: RAGHU
+      password: ROOT
+      database: TESTDB
+
+----application-qa.yml---
+my:
+  app:
+    db:
+      driver: MySQL
+      url: JDBC-MySQL
+#      username: RAGHU
+#      password: ROOT
+      database: TESTDB-QA
+
+---application-prod.yml----
+my:
+  app:
+    db:
+      driver: ORACLE-PROD
+      url: JDBC-ORCL-PORD
+      username: SAMPLE-PROD
+#     password: ROOT
+#     database: TESTDB
+====================================================================

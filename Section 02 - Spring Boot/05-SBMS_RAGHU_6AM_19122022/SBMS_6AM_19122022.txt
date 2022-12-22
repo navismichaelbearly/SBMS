@@ -1,0 +1,276 @@
+			 Date : 19-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+@Value : This annotation is used to read data from Properties file into
+	 variable.
+
+If we have n-variables in class then we need to provide n-@Value annotation.
+
+-----------------------------------------------------------------------
+@ConfigurationProperties:-
+ It is used to load multiple key=vals data into variables.
+
+> Must provide one common prefix for key name.
+> Same prefix must be matched while loading keys in class
+> key name and variable name must be matching.
+> Must generate set/get methods.
+
+*) if we do not follow above rules then Spring Boot will not load
+  key=val data into variables. No Error, No Exception. variables holds
+  default values.
+
+=================================Code================================
+Name: 03SpringBootConfigPropsEx
+
+pom.xml:
+ <dependency>
+	<groupId>org.projectlombok</groupId>
+	<artifactId>lombok</artifactId>
+ </dependency>
+
+*) Spring Bean
+package com.app.raghu.service;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties(prefix = "my.app")
+public class EmailService {
+
+	private String host;
+	private int port;
+	private String username;
+	private boolean active;
+}
+
+*) application.properties
+my.app.host=GmailServer
+my.app.port=589
+my.app.username=ASHOKIT
+my.app.active=true
+
+*) Runner class code
+package com.app.raghu.runner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.app.raghu.service.EmailService;
+
+@Component
+public class TestObjRunner implements CommandLineRunner {
+
+	@Autowired
+	private EmailService service;
+	
+	public void run(String... args) throws Exception {
+		System.out.println(service);
+	}
+}
+
+========================================================================
+	@ConfigurationProperties with Collections
+
+*) It supports loading Collections data from Properties file of type
+	List, Set, Array , Map and Properties
+
+> For List/Set/Array Syntax is
+	prefix.variable[index]= value
+
+> For Map/Properties syntax is
+        prefix.variable.mapKey=mapValue
+
+---------code-----------------------
+1. Spring Bean
+package com.app.raghu.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties(prefix = "my.app")
+public class EmailService {
+
+	private String host;
+	private int port;
+	private String username;
+	private boolean active;
+	
+	private List<String> models;
+	//private Set<String> models;
+	//private String[] models;
+	
+	private Map<String,String> data;
+	//private Properties data;
+	
+}
+
+2. application.properties
+my.app.host=GmailServer
+my.app.port=589
+my.app.username=ASHOKIT
+my.app.active=true
+
+my.app.models[0]=M1A
+my.app.models[1]=M2B
+my.app.models[2]=M3C
+
+my.app.data.C1=ABC
+my.app.data.C2=MNO
+my.app.data.C3=XYZ
+================================================================
+*) @ConfigurationProperties even supports loading complex reference
+   type data using prefix.refvariable.variable=value syntax.
+
+---Ex---
+*) Spring Beans
+package com.app.raghu.service;
+
+import lombok.Data;
+
+@Data
+public class Message {
+
+	private String code;
+	private String details;
+}
+-------
+package com.app.raghu.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties(prefix = "my.app")
+public class EmailService {
+
+	private String host;
+	private int port;
+	private String username;
+	private boolean active;
+	
+	private List<String> models;
+	//private Set<String> models;
+	//private String[] models;
+	
+	private Map<String,String> data;
+	//private Properties data;
+	
+	private Message mob;//Ref variable
+	
+}
+---------
+*) application.properties
+
+my.app.host=GmailServer
+my.app.port=589
+my.app.username=ASHOKIT
+my.app.active=true
+
+my.app.models[0]=M1A
+my.app.models[1]=M2B
+my.app.models[2]=M3C
+
+my.app.data.C1=ABC
+my.app.data.C2=MNO
+my.app.data.C3=XYZ
+
+my.app.mob.code=SMTP
+my.app.mob.details=SAMPLE
+===============================================================
+		YAML (Yet Another Markup Language)
+		       YAMALiant Language
+
+*) YAML is a new way of representing KEY=VAL pairs.
+*) In Spring Boot we can load data using Properties file and YAML file
+*) YAML file extension is .yml
+*) In YAML file we do not write duplicate prefix/levels.
+*) It is More readable, faster in parsing, supports single file profiles.
+*) Snake YAML (Jar Name)
+
+Example:
+----application.properties---------
+my.app.host=ABC
+my.app.port=123
+my.app.user=SAM
+-----------------------------------
+
+----application.yml---------
+my:
+ app:
+  host: ABC
+  port: 123
+  user: SAM
+------------------------------
+
+*) Other tools like: Ansible, K8s.
+
+=====Example====================
+Name : 04SpringBootYAMLEx
+
+> Right click on application.properties > Refator > Rename > Enter name
+ application.yml > next > finish
+
+---application.yml--
+my:
+  db:
+    driver: Oracle
+    url: JDBC-ORCL
+
+----------
+*) Spring Bean
+package com.app.raghu.bean;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties(prefix="my.db")
+public class DatabaseCon {
+
+	private String driver;
+	private String url;
+	
+}
+
+*) Runner class
+package com.app.raghu.runner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.app.raghu.bean.DatabaseCon;
+
+@Component
+public class TestDataRunner implements CommandLineRunner {
+
+	@Autowired
+	private DatabaseCon con;
+	
+	public void run(String... args) throws Exception {
+		System.out.println(con);
+	}
+}
+

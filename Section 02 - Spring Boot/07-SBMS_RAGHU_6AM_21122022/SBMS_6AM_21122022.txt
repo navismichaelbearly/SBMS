@@ -1,0 +1,172 @@
+			 Date : 21-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+  		YAML : Complex Types (List/Map/Ref Type)
+
+*) List/Set/Array: Symbol dash(-) indicates index number
+prefix:
+  variable:
+  - value1      # dash<space>value
+  - value2
+  - value3
+
+*) Map/Properties
+prefix:
+  variable:
+    mapKey: mapValue     #key:<space>value
+    mapKey: mapValue
+
+*) RefType/ HAS-A Relation
+prefix:
+  hasAVariable:
+     variable: value
+     variable: value
+
+
+Q) Can we define both properties and yaml files in Spring Boot application?
+A) YES. We can define both application.properties and application.yml
+
+Q) What is both file having same key name and different values?
+A) Always Spring Container takes value from application.properties
+	with high priority.
+
+Q) What if we define duplicate key with same/different values?
+A) if we define
+     in application.properties  - container loads both and last one is considered
+     in application.yml         - Container throws Exception - DuplicateKeyException
+     
+==========code===================================================
+Name : SpringBootYAMLEx
+Dep  : Lombok
+
+1. Spring beans
+package com.app.raghu.bean;
+
+import lombok.Data;
+
+@Data
+public class Publisher {
+
+	private Integer pid;
+	private String pcode;
+	private Boolean active;
+}
+--------
+package com.app.raghu.bean;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties("my.book")
+public class BookInfo {
+
+	private String bname;
+	
+	private List<String> authors;
+	//private Set<String> authors;
+	//private String[] authors;
+	
+	private Map<String,String> versions;
+	//private Properties versions;
+	
+	private Publisher pob; //HAS-A Variable
+	
+}
+
+2. application.yml
+my:
+  book:
+    bname: SAM
+    authors:
+    - RAGHU
+    - ASHOK
+    - AJAY
+    versions:
+      v1: 3.2GA
+      v2: 4.1-SNAPSHOT
+      v3: 5.5-RELEASE
+    pob:
+      pid: 101
+      pcode: ABC
+      active: false
+
+3. Runner class
+package com.app.raghu.runner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.app.raghu.bean.BookInfo;
+
+@Component
+public class TestRunner implements CommandLineRunner {
+
+	@Autowired
+	private BookInfo bo;
+	
+	public void run(String... args) throws Exception {
+		System.out.println(bo);
+		System.out.println(bo.getAuthors().getClass().getName());
+		System.out.println(bo.getVersions().getClass().getName());
+		
+	}
+
+}
+=========TASK#1=====================================================
+class Author{
+   String name;
+   String addr;
+}
+
+class Book{
+
+  List<Author> authors;  // multiple author objects
+       (or)
+  Map<String,Author> authors;  // multiple author objects
+}
+
+YAML File Input must be given.
+-------------------------------------------------------------------
+Environments:-
+A Machine/System where our application is running successfully (deployed)
+Example Env are:
+1. Dev Env = Devloper Machine
+2. QA Env  = Testing Team 
+3. Stage Env = Developer testing 
+4. UAT Env = User Accptance Test (Client Testing)
+5. Prod Env = Production Environment (Actual servers given to EndCustomers)
+----------------------------------------------------------------------
+Profiles:
+ Maintain multiple Properties/YAML files for multiple environments.
+ Based on Environment selected/running, matching properties/yaml file
+ will be loaded.
+
+Name Rule : application-{profilename}.properties
+
+Activate : (CMD) --spring.profiles.active={profilename}
+
+Ex:
+ Dev Machine (default profile)  : application.properties | application.yml
+ UAT Machine			: application-uat.properties | application-uat.yml
+ Production Machine             : application-prod.properties | application-prod.yml
+  ..etc
+
+*) Our application code remains same in almost all environments.
+   But properties may get varied. Ex: username and password of database.
+====================================================================
+Task#2
+Q) What are compile, build, deploy means?
+A)
+Q) What are .jar, .war and .ear ?
+A)
+Q) What is the difference between Command Line Argument and VM argument?
+A)

@@ -1,0 +1,241 @@
+			 Date : 20-12-2022
+		    Spring Boot and Microservices
+			6AM | Mr. Raghu | (ASHOK IT)
+  ---------------------------------------------------------------------
+ Ex: javabyraghu@gmail.com
+		  YAML (Yet Another Markup Language)
+		       YAMALiant Language
+
+*) YAML is a new way of representing KEY=VAL pairs.
+*) In Spring Boot we can load data using Properties file and YAML file
+*) YAML file extension is .yml
+*) In YAML file we do not write duplicate prefix/levels.
+*) It is More readable, faster in parsing, supports single file profiles.
+*) Snake YAML (Jar Name) used to parse YAML file data.
+
+Notes:
+1. Use Symbol colon (:) in the place of dot(.) and equals(=)
+2. After every colon (new level) change line for next level.
+3. We need to provide spaces for every new level (not for 1st level)
+4. Space count must match proper indentation for the given level
+5. Must provide colon and space before value.
+
+*) if we do not follow space rules or any other then Spring Boot
+   throws (Snake YAML Exception) : ScannerException
+
+--application.properties------
+my.app.driver=Oracle
+my.app.url=JDBC-ORCL
+my.test.model=NEW
+---application.yml---------
+my:
+  app:
+     driver: Oracle
+     url: JDBC-ORCL
+  test:
+     model: NEW
+
+=====================================
+For List/Set/Array Format: (Here dash - indicates index number)
+
+key:
+- value1
+- value2
+- value3
+
+====================================
+For Map/Properties / ref type 
+
+mapkey: mapValue
+
+=======================code=================================
+Name: 05SpringBootYamlEx
+
+pom.xml
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
+Spring Beans
+1. 
+package com.app.raghu.bean;
+
+import lombok.Data;
+
+@Data
+public class Vendor {
+
+	private int vid;
+	private String vcode;
+}
+----
+2.
+package com.app.raghu.bean;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+import lombok.Data;
+
+@Data
+@Component
+@ConfigurationProperties("my.app")
+public class ProductInfo {
+
+	private String pcode;
+	private int pid;
+	private double pcost;
+	
+	private List<String> colors;
+	private Map<String,String> models;
+	private Vendor vob;
+	
+}
+
+---
+3. Test class
+package com.app.raghu.runner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.app.raghu.bean.ProductInfo;
+
+@Component
+public class TestDataRunner implements CommandLineRunner {
+
+	@Autowired
+	private ProductInfo pob;
+	
+	public void run(String... args) throws Exception {
+		System.out.println(pob);
+	}
+}
+
+4. application.yml
+my:
+  app:
+    pid: 100
+    pcost: 500
+    pcode: PEN
+    colors:
+    - RED
+    - GREEN
+    - PINK
+    models:
+      M1: ABC
+      M2: MNO
+      M3: XYZ
+    vob:
+      vid: 9900
+      vcode: ABC
+
+
+=====Examples=======================================================
+Ex#1
+--application.properties--
+my.app.test=A
+spring.boot.version=2.7
+my.app.model=ONE
+spring.boot.format=MAVEN
+-------------------------
+
+--application.yml---
+my:
+  app:
+    test: A
+    model: ONE
+spring:
+  boot:
+    version: 2.7
+    format: MAVEN
+---------------------
+
+Ex#2
+--application.properties---
+my.app.version=3.5
+my.test.model=NEW
+my.app.format=OK
+my.test.info=WELCOME
+---------------------------
+
+--application.yml----------
+my:
+  app:
+    version: 3.5
+    format: OK
+  test:
+    info: WELCOME
+    model: NEW
+
+Online Converters:
+http://mageddo.com/tools/yaml-converter
+
+*) In STS IDE, we can convert Properties to YAML file
+> Right click on Properties file 
+> choose option 'convert .properties to .yaml'
+> finish
+=========================================================
+Ex#3
+-----application.properties----
+my.app.data[0]=A
+my.app.data[1]=B
+my.app.data[2]=C
+
+---application.yml-----
+my:
+  app:
+    data:
+    - A           # here 'dash space value'
+    - B
+    - C
+==============================================
+Ex#4 
+--application.properties-----
+my.app.colors.C1=RED
+my.app.colors.C2=GREEN
+my.app.colors.C3=YELLOW
+
+----application.yml---
+my:
+  app:
+    colors:
+      C1: RED          # here 'key:space value'
+      C2: GREEN
+      C3: YELLOW
+==============================================================
+TASK#1
+a. create both properties and yaml file
+b. Write same key in two files with different values
+c. Try to read/load data and print output
+
+---application.properties----
+my.app.id=10
+
+---application.yml----
+my:
+  app:
+    id: 20
+--------------------------
+
+TASK#2 Write some duplicate key=val combinations in 
+  
+a. Properties file
+
+---application.properties----
+my.app.id=10
+my.app.id=30
+----------------------------
+
+b. YAML file
+---application.yml----
+my:
+  app:
+    id: 20
+    id: 55
+--------------------------
